@@ -1,0 +1,108 @@
+{% extends 'navigator/base.html' %}
+
+{% block content %}
+<div class="mb-6">
+    <!-- <h2 class="text-2xl font-bold mb-2">欢迎使用医院内部导航站</h2> -->
+    
+    {% if user.is_authenticated %}
+        <p class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
+            您的IP是 <strong>{{ client_ip }}</strong>, 当前时间 <strong>{{ current_time }}</strong>
+            <!-- {% if user.profile.department %}
+                <span class="ml-2">部门: {{ user.profile.department }}</span>
+            {% endif %} -->
+        </p>
+    {% else %}
+        <p class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-6">
+            您的IP是 <strong>{{ client_ip }}</strong>, 当前时间 <strong>{{ current_time }}</strong><br>
+            <!-- 您尚未登录，部分资源可能不可见。<a href="{% url 'login' %}" class="underline font-semibold">点击此处登录</a> -->
+        </p>
+    {% endif %}
+</div>
+
+<div id="categories-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="col-span-full text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        <p class="mt-2 text-gray-600">正在加载导航内容...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCategories();
+    });
+
+    function fetchCategories() {
+        fetch('/api/categories')
+            .then(response => response.json())
+            .then(data => {
+                renderCategories(data);
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                document.getElementById('categories-container').innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                            <p>加载导航内容失败，请刷新页面重试</p>
+                        </div>
+                    </div>
+                `;
+            });
+    }
+
+    function renderCategories(categories) {
+        const container = document.getElementById('categories-container');
+        
+        if (categories.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-500">暂无导航内容</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        
+        categories.forEach(category => {
+            html += `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                    <div class="bg-blue-500 text-white px-4 py-3">
+                        <h3 class="text-lg font-semibold flex items-center">
+                            ${category.icon ? `<i class="${category.icon} mr-2"></i>` : ''}
+                            ${category.name}
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <ul class="space-y-3">
+            `;
+            
+            category.links.forEach(link => {
+                html += `
+                    <li>
+                        <a href="${link.url}" target="_blank" class="flex items-start p-2 hover:bg-gray-50 rounded transition-colors group">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 mr-3">
+                                ${link.icon_class ? `<i class="${link.icon_class}"></i>` : '<i class="fas fa-link"></i>'}
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-800 group-hover:text-blue-600">${link.title}</div>
+                                ${link.description ? `<p class="text-sm text-gray-500">${link.description}</p>` : ''}
+                                ${link.visibility === 'authenticated' ? '<span class="inline-block text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded mt-1">仅登录可见</span>' : ''}
+                            </div>
+                        </a>
+                    </li>
+                `;
+            });
+            
+            html += `
+                        </ul>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+</script>
+{% endblock %} 

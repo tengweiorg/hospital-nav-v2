@@ -1,0 +1,71 @@
+{% extends 'navigator/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">个人资料</h2>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="bg-blue-500 text-white px-6 py-4">
+            <h3 class="text-xl font-semibold">用户信息</h3>
+        </div>
+        
+        <div class="p-6">
+            <div id="user-info" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-500 mb-1">用户名</p>
+                    <p class="font-medium text-lg">{{ user.username }}</p>
+                </div>
+                
+                <div>
+                    <p class="text-gray-500 mb-1">电子邮件</p>
+                    <p class="font-medium text-lg">{{ user.email|default:"未设置" }}</p>
+                </div>
+                
+                <div>
+                    <p class="text-gray-500 mb-1">姓名</p>
+                    <p class="font-medium text-lg">
+                        {% if user.first_name or user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            未设置
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div>
+                    <p class="text-gray-500 mb-1">部门</p>
+                    <p class="font-medium text-lg">{{ user.profile.department|default:"未设置" }}</p>
+                </div>
+                
+                <div>
+                    <p class="text-gray-500 mb-1">职位</p>
+                    <p class="font-medium text-lg">{{ user.profile.position|default:"未设置" }}</p>
+                </div>
+                
+                <div>
+                    <p class="text-gray-500 mb-1">账户类型</p>
+                    <p class="font-medium text-lg">
+                        {% if user.is_staff %}
+                            管理员
+                        {% else %}
+                            普通用户
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-blue-500 text-white px-6 py-4">
+            <h3 class="text-xl font-semibold">账户安全</h3>
+        </div>
+        
+        <div class="p-6">
+            <a href="{% url 'admin:password_change' %}" class="inline-block bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <i class="fas fa-key mr-2"></i> 修改密码
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
