@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Link
+from .models import Category, Link, Folder, File
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -26,3 +26,15 @@ class LinkAdmin(admin.ModelAdmin):
         queryset.update(is_pinned=False)
         self.message_user(request, f"{queryset.count()} 个链接已取消置顶")
     unpin_links.short_description = "取消选中链接的置顶"
+
+@admin.register(Folder)
+class FolderAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent', 'created_at')
+    list_filter = ('parent',)
+    search_fields = ('name',)
+
+@admin.register(File)
+class FileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'folder', 'get_file_size', 'get_file_extension', 'created_at', 'download_count')
+    list_filter = ('folder', 'created_at')
+    search_fields = ('name', 'description')

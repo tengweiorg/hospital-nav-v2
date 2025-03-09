@@ -15,4 +15,10 @@ urlpatterns = [
     path('api/htmx/categories', views.htmx_categories, name='htmx_categories'),
     path('api/htmx/search', views.htmx_search, name='htmx_search'),
     path('api/htmx/popular', views.htmx_popular, name='htmx_popular'),
+    
+    # 添加文件浏览器端点
+    path('files/', views.file_browser, name='file_browser'),
+    path('files/<int:folder_id>/', views.file_browser, name='folder_browser'),
+    path('download/<int:file_id>/', views.download_file, name='download_file'),
+    path('file/<int:file_id>/', views.file_view, name='file_view'),
 ] 

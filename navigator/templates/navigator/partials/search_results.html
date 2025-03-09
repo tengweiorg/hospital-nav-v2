@@ -35,5 +35,8 @@
   </div>
 </a>
 {% endfor %} {% else %}
-<div class="p-4 text-gray-500 text-center">未找到相关结果</div>
+<div class="p-4 text-gray-500 text-center">
+  {% if query %} 未找到与"{{ query }}"相关的结果 {% else %} 请输入搜索关键词 {%
+  endif %}
+</div>
 {% endif %}

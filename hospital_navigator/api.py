@@ -302,26 +302,71 @@ def htmx_categories(request):
 @htmx_router.get("/search")
 def htmx_search(request, q: str = ""):
     """HTMX搜索端点，返回HTML片段"""
-    if not q or len(q) < 1:
-        return HttpResponse("")
     
-    # 搜索标题、描述和拼音
-    links = Link.objects.filter(
-        Q(title__icontains=q) | 
-        Q(description__icontains=q) |
-        Q(pinyin__icontains=q)
-    ).select_related('category')
+    # 允许单字符搜索
+    if not q:
     
-    # 检查可见性
-    if not request.user.is_authenticated:
-        links = links.filter(visibility='public')
+        return HttpResponse("", content_type="text/html")
     
-    # 渲染HTML片段
-    html = render_to_string('navigator/partials/search_results.html', {
-        'links': links[:15]
-    })
-    
-    return HttpResponse(html)
+    try:
+        # 搜索标题、描述和拼音
+        links = Link.objects.filter(
+            Q(title__icontains=q) | 
+            Q(description__icontains=q) |
+            Q(pinyin__icontains=q)  # 确保包含拼音搜索
+        ).select_related('category')
+        
+      
+        
+        # 检查可见性
+        if not request.user.is_authenticated:
+            links = links.filter(visibility='public')
+           
+        
+        # 手动构建HTML而不是使用模板
+        if links.exists():
+            html_parts = []
+            for link in links[:15]:
+                html_parts.append(f'''
+                <a href="{link.url}" class="block search-result-item js-track-click" data-link-id="{link.id}" target="_blank">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0">
+                            <i class="{link.icon_class or 'fas fa-link'}"></i>
+                        </div>
+                        <div>
+                            <div class="search-result-title">
+                                {link.title}
+                                {('<i class="fas fa-thumbtack text-blue-500 text-xs ml-1" title="已置顶"></i>') if getattr(link, 'is_pinned', False) else ''}
+                            </div>
+                            {('<p class="search-result-description">' + link.description + '</p>') if link.description else ''}
+                            <div class="flex items-center text-xs text-gray-500 mt-1">
+                                <span>
+                                    <i class="fas fa-eye text-gray-400 mr-1"></i>
+                                    <span class="search-click-count" data-link-id="{link.id}">{link.click_count}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                ''')
+            html = ''.join(html_parts)
+        else:
+            html = f'''
+            <div class="p-4 text-gray-500 text-center">
+                {'未找到与"' + q + '"相关的结果' if q else '请输入搜索关键词'}
+            </div>
+            '''
+        
+        return HttpResponse(html, content_type="text/html")
+    except Exception as e:
+       
+        # 返回错误信息
+        error_html = f'''
+        <div class="p-4 text-red-500 text-center">
+            搜索出错: {str(e)}
+        </div>
+        '''
+        return HttpResponse(error_html, content_type="text/html")
 
 @htmx_router.get("/popular")
 def htmx_popular_links(request, limit: int = 10):

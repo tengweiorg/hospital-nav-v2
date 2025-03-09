@@ -10,11 +10,8 @@
     {% endif %}
     <a
       href="{{ link.url }}"
-      class="link-content"
-      hx-post="/api/link/{{ link.id }}/click/"
-      hx-trigger="mousedown"
-      hx-swap="innerHTML"
-      hx-target="#popular-count-{{ link.id }}"
+      class="link-content js-track-click"
+      data-link-id="{{ link.id }}"
       target="_blank"
     >
       <div class="link-icon">
@@ -34,7 +31,7 @@
         {% endif %}
         <div class="click-count">
           <i class="fas fa-eye"></i>
-          <span class="click-count-value" id="popular-count-{{ link.id }}"
+          <span class="click-count-value popular-count-{{ link.id }}"
             >{{ link.click_count }}</span
           >
         </div>

@@ -1,0 +1,14 @@
+<a
+  href="{{ link.url }}"
+  class="link-item js-track-click"
+  data-link-id="{{ link.id }}"
+  target="_blank"
+>
+  <!-- 链接内容 -->
+  <div class="click-count">
+    <i class="fas fa-eye"></i>
+    <span class="click-count-value category-count-{{ link.id }}"
+      >{{ link.click_count }}</span
+    >
+  </div>
+</a>

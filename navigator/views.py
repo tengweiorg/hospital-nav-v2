@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from datetime import datetime
 from accounts.forms import UserForm, ProfileForm
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .models import Link, Category
+from .models import Link, Category, Folder, File
 from django.db.models import Q, F
 import locale
 
@@ -110,24 +110,25 @@ def custom_login(request):
 
 @require_POST
 def increment_click_count(request, link_id):
-    """增加链接点击次数并返回最新计数值"""
+    """记录链接点击次数的API端点"""
     try:
-        # 使用 F() 表达式原子性增加点击量
+        # 记录请求信息
+       
+        # 使用F表达式更新计数
         Link.objects.filter(id=link_id).update(click_count=F('click_count') + 1)
         
-        # 重新获取最新的链接对象
+        # 获取更新后的链接
         link = Link.objects.get(id=link_id)
         
-        # 返回标准JSON响应，包含ID和点击计数
         return JsonResponse({
-            'id': link_id,
-            'click_count': link.click_count,
-            'status': 'success'
+            'status': 'success',
+            'click_count': link.click_count
         })
-    except Link.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': '链接不存在'}, status=404)
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 def get_categories(request):
     categories = Category.objects.all().order_by('order', 'name')
@@ -191,28 +192,38 @@ def htmx_categories(request):
     
     return render(request, 'navigator/partials/categories.html', {
         'categories': result
-    })
+    }, content_type='text/html')
 
 def htmx_search(request):
-    """HTMX搜索视图，返回HTML片段"""
+    """HTMX搜索视图"""
     query = request.GET.get('q', '')
-    if not query or len(query) < 1:
-        return HttpResponse('')
+   
     
-    # 搜索标题、描述和拼音
+    if not query or len(query) < 1:
+       
+        return HttpResponse('', content_type='text/html')
+    
+    # 搜索标题、描述和拼音（恢复拼音搜索功能）
     links = Link.objects.filter(
         Q(title__icontains=query) | 
         Q(description__icontains=query) |
-        Q(pinyin__icontains=query)
-    ).select_related('category')
+        Q(pinyin__icontains=query)  # 恢复拼音搜索
+    )
+    
+   
     
     # 检查可见性
     if not request.user.is_authenticated:
         links = links.filter(visibility='public')
+       
     
-    return render(request, 'navigator/partials/search_results.html', {
-        'links': links[:15]
-    })
+    # 渲染搜索结果
+    html = render(request, 'navigator/partials/search_results.html', {
+        'links': links[:15],
+        'query': query  # 传递查询参数到模板
+    }, content_type='text/html')
+    
+    return html
 
 def htmx_popular(request):
     """HTMX热门链接视图，返回HTML片段"""
@@ -261,4 +272,57 @@ def htmx_popular(request):
     
     return render(request, 'navigator/partials/popular_links.html', {
         'links': links_list
+    }, content_type='text/html')
+
+def file_browser(request, folder_id=None):
+    """文件浏览器视图"""
+    if folder_id:
+        current_folder = get_object_or_404(Folder, id=folder_id)
+        # 获取当前文件夹的子文件夹
+        subfolders = current_folder.subfolders.all()
+        # 获取当前文件夹的文件
+        files = current_folder.files.all()
+        # 获取父文件夹，用于导航
+        parent_folder = current_folder.parent
+    else:
+        # 根文件夹
+        current_folder = None
+        # 获取顶级文件夹（没有父文件夹的文件夹）
+        subfolders = Folder.objects.filter(parent=None)
+        files = File.objects.filter(folder=None)
+        parent_folder = None
+    
+    return render(request, 'navigator/file_browser.html', {
+        'current_folder': current_folder,
+        'subfolders': subfolders,
+        'files': files,
+        'parent_folder': parent_folder
+    })
+
+def download_file(request, file_id):
+    """文件下载视图"""
+    file_obj = get_object_or_404(File, id=file_id)
+    
+    # 增加下载计数
+    file_obj.download_count += 1
+    file_obj.save(update_fields=['download_count'])
+    
+    # 返回文件响应
+    response = FileResponse(file_obj.file.open(), as_attachment=True, filename=file_obj.name)
+    return response
+
+def file_view(request, file_id):
+    """直接访问文件视图"""
+    file_obj = get_object_or_404(File, id=file_id)
+    
+    # 增加查看计数
+    file_obj.view_count = F('view_count') + 1 if hasattr(file_obj, 'view_count') else 1
+    file_obj.save(update_fields=['view_count'] if hasattr(file_obj, 'view_count') else [])
+    
+    # 生成文件直接URL
+    file_url = request.build_absolute_uri(file_obj.file.url)
+    
+    return render(request, 'navigator/file_view.html', {
+        'file': file_obj,
+        'file_url': file_url
     })

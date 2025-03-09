@@ -12,11 +12,8 @@
     <div class="link-card">
       <a
         href="{{ link.url }}"
-        class="link-content"
-        hx-post="/api/link/{{ link.id }}/click/"
-        hx-trigger="mousedown"
-        hx-swap="innerHTML"
-        hx-target="#click-count-{{ link.id }}"
+        class="link-content js-track-click"
+        data-link-id="{{ link.id }}"
         target="_blank"
       >
         <div class="link-icon">

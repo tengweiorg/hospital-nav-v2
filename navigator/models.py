@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from pypinyin import lazy_pinyin
+import os
+from django.conf import settings
+import uuid
 
 # Create your models here.
 
@@ -55,3 +58,66 @@ class Link(models.Model):
     
     def __str__(self):
         return self.title
+
+class Folder(models.Model):
+    """文件夹模型"""
+    name = models.CharField(max_length=100, verbose_name="文件夹名称")
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='subfolders', verbose_name="父文件夹")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    
+    class Meta:
+        verbose_name = "文件夹"
+        verbose_name_plural = "文件夹"
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+    
+    def get_full_path(self):
+        """获取完整路径"""
+        if self.parent:
+            return os.path.join(self.parent.get_full_path(), self.name)
+        return self.name
+    
+    @property
+    def has_subfolders(self):
+        """检查是否有子文件夹"""
+        return self.subfolders.exists()
+        
+    @property
+    def has_files(self):
+        """检查是否有文件"""
+        return self.files.exists()
+
+class File(models.Model):
+    """文件模型"""
+    name = models.CharField(max_length=100, verbose_name="文件名")
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='files', verbose_name="所属文件夹")
+    file = models.FileField(upload_to='downloads/', verbose_name="文件")
+    description = models.TextField(blank=True, null=True, verbose_name="文件描述")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="上传时间")
+    download_count = models.PositiveIntegerField(default=0, verbose_name="下载次数")
+    share_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    view_count = models.PositiveIntegerField(default=0, verbose_name="查看次数")
+    
+    class Meta:
+        verbose_name = "文件"
+        verbose_name_plural = "文件"
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+    
+    def get_file_size(self):
+        """获取文件大小"""
+        try:
+            return self.file.size
+        except:
+            return 0
+            
+    def get_file_extension(self):
+        """获取文件扩展名"""
+        return os.path.splitext(self.file.name)[1][1:].upper()
+
+    def get_share_url(self):
+        return f"/file/{self.id}/{self.share_code}/"
