@@ -56,7 +56,7 @@ ehthumbs.db
 Desktop.ini
 
 # 项目特定文件
-/static/
+# /static/
 /staticfiles/
 /media/ 
 .venv/

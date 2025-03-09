@@ -1,0 +1,479 @@
+/* 卡片容器样式 */
+.category-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.category-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+/* 分类标题样式 */
+.category-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.category-title i {
+  margin-right: 10px;
+}
+
+.category-count {
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+/* 链接列表容器 */
+.links-container {
+  padding: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 链接卡片样式 */
+.link-card {
+  border-radius: 8px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.link-card:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+}
+
+.link-content {
+  display: flex;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.link-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.link-text {
+  flex-grow: 1;
+  min-width: 0; /* 确保文本可以正确截断 */
+}
+
+.link-title {
+  color: #334155;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-description {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 点击次数样式 */
+.click-count {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.click-count-value {
+  margin-left: 5px;
+  font-weight: 600;
+}
+
+/* 脉冲动画 */
+.pulse-animation {
+  animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); color: #10b981; opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 0.6s ease-in-out;
+  font-weight: bold;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.empty-state i {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+/* 响应式样式 */
+@media (max-width: 640px) {
+  .category-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .category-count {
+    margin-top: 8px;
+  }
+  
+  .link-content {
+    padding: 10px 12px;
+  }
+  
+  .link-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* 热门链接样式 - 调整为蓝色主题 */
+.popular-links-section {
+  background-image: linear-gradient(to right, #f0f7ff, #e6f0fd);
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.popular-links-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #3b82f6, #1e40af);
+}
+
+.popular-links-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  color: #1e40af;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.popular-links-header i {
+  margin-right: 8px;
+  color: #3b82f6;
+}
+
+.popular-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.popular-link-card {
+  background: white;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  padding: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.popular-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.popular-link-icon {
+  width: 36px;
+  height: 36px;
+  background: #f0f7ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.popular-link-content {
+  flex-grow: 1;
+}
+
+.popular-link-title {
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+.popular-link-clicks {
+  font-size: 12px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+}
+
+.popular-link-clicks i {
+  font-size: 10px;
+  margin-right: 4px;
+}
+
+/* 确保搜索结果中的点击计数元素样式 */
+.search-click-count {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* 修复热门链接响应式布局 */
+@media (max-width: 768px) {
+  .popular-links-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+/* 置顶链接样式 */
+.pinned-link {
+  border-left: 3px solid #3b82f6;
+  background-color: #f8faff;
+  box-shadow: 0 2px 5px rgba(59, 130, 246, 0.1);
+}
+
+.pinned-link .popular-link-title {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.pin-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #3b82f6;
+  font-size: 12px;
+  z-index: 1;
+}
+
+.inline-icon {
+  font-size: 70%;
+  transform: rotate(-45deg);
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* 搜索结果样式优化 */
+.search-results {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  max-height: 450px;
+  overflow-y: auto;
+  background-color: white !important;
+  z-index: 9999 !important;
+  position: absolute !important;
+  width: 100%;
+  top: calc(100% + 5px);
+  left: 0;
+  margin-top: 0;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 确保搜索结果在点击时不会消失 */
+.search-results * {
+  pointer-events: auto !important;
+}
+
+/* 当搜索框获得焦点时，确保结果显示 */
+#search-input:focus + #search-results:not(.hidden) {
+  display: block !important;
+}
+
+.search-result-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.search-result-item:hover {
+  background-color: #f8faff;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-title {
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.search-result-description {
+  color: #6b7280;
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 热门链接区域样式统一 */
+#popular-links .link-card {
+  border-radius: 6px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+#popular-links .link-card:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#popular-links .link-content {
+  display: flex;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+#popular-links .link-icon {
+  width: 36px;
+  height: 36px;
+  margin-right: 10px;
+}
+
+#popular-links .link-title {
+  font-size: 0.9rem;
+}
+
+#popular-links .link-description {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 确保点击次数样式一致 */
+#popular-links .click-count {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+#popular-links .click-count-value {
+  margin-left: 5px;
+  font-weight: 600;
+}
+
+/* 移动端热门链接卡片样式优化 */
+@media (max-width: 640px) {
+  #popular-links .link-card {
+    padding: 0; /* 减少内边距 */
+  }
+  
+  #popular-links .link-content {
+    padding: 8px 10px; /* 减小内边距 */
+  }
+  
+  #popular-links .link-icon {
+    width: 32px; /* 减小图标 */
+    height: 32px;
+    margin-right: 8px;
+  }
+  
+  #popular-links .link-title {
+    font-size: 0.85rem; /* 稍微减小字体 */
+  }
+  
+  #popular-links .link-description {
+    font-size: 0.75rem; /* 减小描述文字 */
+    -webkit-line-clamp: 1; /* 只显示一行 */
+    line-clamp: 1;
+  }
+  
+  #popular-links .click-count {
+    font-size: 11px; /* 减小点击计数字体 */
+  }
+  
+  /* 减小间隙 */
+  #popular-links.gap-3 {
+    gap: 0.5rem;
+  }
+}
+
+/* 点击反馈 */
+.link-card:active, .link-item:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+} 

@@ -1,0 +1,740 @@
+/* 自定义Admin登录页样式 */
+#header {
+    background: #1e3a8a;
+    color: white;
+}
+
+.login #header {
+    height: auto;
+    padding: 15px 16px;
+}
+
+.login #content {
+    padding: 20px 20px 0;
+}
+
+.login #container {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.login .form-row {
+    padding: 8px 0;
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #1e3a8a;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: #2563eb;
+}
+
+/* 基础样式 */
+:root {
+    --primary-color: #1a4789;
+    --secondary-color: #2c7be5;
+    --accent-color: #3b82f6;
+    --light-bg: #f8fafc;
+    --border-color: #e2e8f0;
+    --success-color: #0d9488;
+    --warning-color: #f59e0b;
+    --error-color: #dc2626;
+    --text-color: #334155;
+    --text-light: #64748b;
+    --header-height: 60px;
+}
+
+/* 整体布局 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-color);
+    background-color: #f1f5f9;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+}
+
+/* 头部样式 */
+#header {
+    background: linear-gradient(90deg, var(--primary-color) 0%, #2c5282 100%);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: var(--header-height);
+    line-height: var(--header-height);
+    padding: 0 20px;
+}
+
+#branding h1 {
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+#branding h1 a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+#branding h1 a i {
+    margin-right: 10px;
+    font-size: 1.6rem;
+}
+
+#user-tools {
+    font-size: 0.85rem;
+    position: absolute;
+    right: 20px;
+    top: 0;
+}
+
+#user-tools a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    border-bottom: none;
+}
+
+#user-tools a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* 侧边栏样式 */
+.module h2, .module caption, .inline-group h2 {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    border-radius: 6px 6px 0 0;
+    padding: 12px 15px;
+    font-size: 1rem;
+}
+
+div.breadcrumbs {
+    background: var(--secondary-color);
+    padding: 12px 20px;
+    color: white;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+div.breadcrumbs a {
+    color: white;
+}
+
+div.breadcrumbs a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* 表格样式 */
+#changelist table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+#changelist table thead th {
+    background: #f1f5f9;
+    padding: 12px 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.row1 {
+    background: white;
+}
+
+.row2 {
+    background: var(--light-bg);
+}
+
+#changelist tbody tr:hover {
+    background-color: #e9f2fe;
+}
+
+#changelist tbody td, #changelist tbody th {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 按钮样式 */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--primary-color);
+    border-radius: 4px;
+    padding: 10px 16px;
+    transition: all 0.2s;
+    border: none;
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--accent-color);
+    font-weight: 600;
+}
+
+.button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: #2563eb;
+}
+
+/* 表单样式 */
+.form-row {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-row label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+fieldset.module {
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 25px;
+    background: white;
+}
+
+.aligned label {
+    width: 180px;
+}
+
+form .aligned p.help {
+    margin-left: 180px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* 输入框样式 */
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], input[type=tel], textarea, select, .vTextField {
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus, textarea:focus, select:focus, .vTextField:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+/* 消息样式 */
+.messagelist {
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.messagelist li {
+    padding: 12px 15px;
+    margin: 0 0 10px 0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.messagelist li::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.messagelist li.success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.messagelist li.success::before {
+    content: "\f058";
+    color: #10b981;
+}
+
+.messagelist li.warning {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.messagelist li.warning::before {
+    content: "\f071";
+    color: #f59e0b;
+}
+
+.messagelist li.error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.messagelist li.error::before {
+    content: "\f057";
+    color: #ef4444;
+}
+
+/* 登录页样式 */
+.login {
+    background: #f1f5f9;
+}
+
+.login #header {
+    height: auto;
+    padding: 20px;
+    text-align: center;
+    background: var(--primary-color);
+}
+
+.login #branding h1 {
+    margin: 0;
+    display: inline-block;
+}
+
+.login #container {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 50px;
+    overflow: hidden;
+    max-width: 450px;
+}
+
+.login #content {
+    padding: 25px;
+}
+
+.login .form-row {
+    padding: 10px 0;
+    border: none;
+}
+
+.login .form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.login .submit-row {
+    padding: 15px 0 0;
+    text-align: center;
+}
+
+.login .submit-row input {
+    width: 100%;
+    padding: 12px;
+}
+
+/* 仪表盘样式 */
+.dashboard .module {
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    background: white;
+}
+
+.dashboard .module h2 {
+    border-radius: 6px 6px 0 0;
+}
+
+.dashboard .module table {
+    width: 100%;
+}
+
+.dashboard .module table td, .dashboard .module table th {
+    padding: 12px 15px;
+}
+
+.dashboard .module table th {
+    width: 100%;
+}
+
+.dashboard .module table td {
+    white-space: nowrap;
+}
+
+/* 分页样式 */
+.paginator {
+    margin: 20px 0;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.paginator a, .paginator .this-page {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 0 2px;
+    display: inline-block;
+    min-width: 1.5em;
+    text-align: center;
+}
+
+.paginator a {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.paginator a:hover {
+    background: var(--light-bg);
+    border-color: #cbd5e1;
+}
+
+.paginator .this-page {
+    background: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+    font-weight: 600;
+}
+
+/* 自定义仪表盘卡片 */
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.dashboard-card h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-card h2 i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.dashboard-card p {
+    color: var(--text-light);
+    margin-bottom: 0;
+}
+
+/* 响应式优化 */
+@media (max-width: 767px) {
+    #header {
+        height: auto;
+        line-height: normal;
+        padding: 15px;
+    }
+    
+    #branding h1 {
+        font-size: 1.2rem;
+    }
+    
+    #user-tools {
+        position: static;
+        display: block;
+        margin-top: 10px;
+    }
+    
+    .aligned label {
+        width: 100%;
+        display: block;
+        padding: 0 0 5px;
+    }
+    
+    form .aligned p.help {
+        margin-left: 0;
+    }
+}
+
+/* 改进表单元素样式 */
+.form-row select {
+    min-height: 36px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* 多选框样式优化 */
+.form-row select[multiple] {
+    min-height: 150px;
+    padding: 8px;
+}
+
+/* 选择框悬停和聚焦状态 */
+.form-row select:hover {
+    border-color: #cbd5e1;
+}
+
+.form-row select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+/* 选择框选项样式 */
+.form-row select option {
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: normal;
+    min-height: 25px;
+    display: block;
+}
+
+/* 表单字段集样式 */
+fieldset.module {
+    margin-bottom: 25px;
+}
+
+/* 表单行间距 */
+.form-row {
+    padding: 15px 0;
+}
+
+/* 表单标签样式 */
+.form-row label {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* 表单帮助文本 */
+.form-row .help {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* 改进复选框和单选框样式 */
+.form-row input[type="checkbox"],
+.form-row input[type="radio"] {
+    margin-right: 5px;
+    transform: scale(1.2);
+}
+
+/* 改进日期和时间选择器 */
+.form-row .datetime {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-row .datetime select {
+    min-width: 80px;
+}
+
+/* 改进内联组样式 */
+.inline-group {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 25px;
+}
+
+.inline-group .inline-related {
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px;
+}
+
+.inline-group .inline-related:last-child {
+    border-bottom: none;
+}
+
+/* 改进过滤器选择器 */
+.selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;
+}
+
+.selector-available, 
+.selector-chosen {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.selector-available h2, 
+.selector-chosen h2 {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.selector select {
+    width: 100%;
+    min-height: 200px;
+    border: none;
+    padding: 10px;
+}
+
+.selector-chooser {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.selector-chooser li {
+    list-style: none;
+}
+
+.selector-chooser a {
+    display: inline-block;
+    padding: 8px 12px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.selector-chooser a:hover {
+    background: var(--secondary-color);
+}
+
+.selector-filter {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.selector-filter input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* 响应式优化 */
+@media (min-width: 768px) {
+    .selector {
+        flex-direction: row;
+    }
+    
+    .selector-available, 
+    .selector-chosen {
+        width: 45%;
+    }
+    
+    .selector-chooser {
+        flex-direction: column;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* 修复下拉菜单显示问题 */
+.form-row select option {
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: normal;
+    min-height: 25px;
+    display: block;
+}
+
+/* 确保下拉菜单有足够的宽度 */
+.form-row select {
+    min-width: 250px;
+    text-overflow: ellipsis;
+}
+
+/* 特别针对可见性字段的样式 */
+.field-visibility select,
+select[name="visibility"] {
+    min-height: 40px;
+    height: auto;
+    padding-right: 30px;
+}
+
+/* 改进下拉菜单的外观 */
+.form-row select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+/* 确保下拉菜单在打开时有足够的z-index */
+.form-row select:focus {
+    z-index: 100;
+    position: relative;
+}
+
+/* 修复Firefox中的特定问题 */
+@-moz-document url-prefix() {
+    .form-row select {
+        text-indent: 0.01px;
+        text-overflow: '';
+        padding-right: 30px;
+    }
+    
+    .form-row select option {
+        padding: 10px;
+    }
+}
+
+/* 修复Chrome中的特定问题 */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .form-row select {
+        padding-right: 30px;
+    }
+    
+    .form-row select option {
+        padding: 10px;
+    }
+}
+
+/* 修复IE中的特定问题 */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .form-row select {
+        padding-right: 30px;
+    }
+    
+    .form-row select option {
+        padding: 10px;
+    }
+}
+
+/* 确保下拉菜单在移动设备上也能正常工作 */
+@media (max-width: 767px) {
+    .form-row select {
+        width: 100%;
+        max-width: none;
+    }
+} 
