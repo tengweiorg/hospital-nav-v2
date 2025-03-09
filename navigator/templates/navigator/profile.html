@@ -4,55 +4,85 @@
 <div class="max-w-4xl mx-auto">
     <h2 class="text-2xl font-bold mb-6">个人资料</h2>
     
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'success' %}bg-green-100 border-green-400 text-green-700{% else %}bg-red-100 border-red-400 text-red-700{% endif %} px-4 py-3 rounded relative mb-4">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
     <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
         <div class="bg-blue-500 text-white px-6 py-4">
-            <h3 class="text-xl font-semibold">用户信息</h3>
+            <h3 class="text-xl font-semibold">编辑个人资料</h3>
         </div>
         
         <div class="p-6">
-            <div id="user-info" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <p class="text-gray-500 mb-1">用户名</p>
-                    <p class="font-medium text-lg">{{ user.username }}</p>
-                </div>
+            <form method="post">
+                {% csrf_token %}
                 
-                <div>
-                    <p class="text-gray-500 mb-1">电子邮件</p>
-                    <p class="font-medium text-lg">{{ user.email|default:"未设置" }}</p>
-                </div>
-                
-                <div>
-                    <p class="text-gray-500 mb-1">姓名</p>
-                    <p class="font-medium text-lg">
-                        {% if user.first_name or user.last_name %}
-                            {{ user.first_name }} {{ user.last_name }}
-                        {% else %}
-                            未设置
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">用户名</label>
+                        <input type="text" value="{{ user.username }}" 
+                               class="w-full px-4 py-2 border rounded-lg bg-gray-100" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="{{ user_form.first_name.id_for_label }}" class="block text-gray-700 font-medium mb-2">名</label>
+                        <input type="text" name="first_name" id="{{ user_form.first_name.id_for_label }}" 
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               value="{{ user_form.first_name.value|default:'' }}">
+                        {% if user_form.first_name.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ user_form.first_name.errors.0 }}</p>
                         {% endif %}
-                    </p>
-                </div>
-                
-                <div>
-                    <p class="text-gray-500 mb-1">部门</p>
-                    <p class="font-medium text-lg">{{ user.profile.department|default:"未设置" }}</p>
-                </div>
-                
-                <div>
-                    <p class="text-gray-500 mb-1">职位</p>
-                    <p class="font-medium text-lg">{{ user.profile.position|default:"未设置" }}</p>
-                </div>
-                
-                <div>
-                    <p class="text-gray-500 mb-1">账户类型</p>
-                    <p class="font-medium text-lg">
-                        {% if user.is_staff %}
-                            管理员
-                        {% else %}
-                            普通用户
+                    </div>
+                    
+                    <div>
+                        <label for="{{ user_form.last_name.id_for_label }}" class="block text-gray-700 font-medium mb-2">姓</label>
+                        <input type="text" name="last_name" id="{{ user_form.last_name.id_for_label }}" 
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               value="{{ user_form.last_name.value|default:'' }}">
+                        {% if user_form.last_name.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ user_form.last_name.errors.0 }}</p>
                         {% endif %}
-                    </p>
+                    </div>
+                    
+                    <div>
+                        <label for="{{ user_form.email.id_for_label }}" class="block text-gray-700 font-medium mb-2">电子邮箱</label>
+                        <input type="email" name="email" id="{{ user_form.email.id_for_label }}" 
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               value="{{ user_form.email.value|default:'' }}">
+                        {% if user_form.email.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ user_form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ profile_form.department.id_for_label }}" class="block text-gray-700 font-medium mb-2">部门</label>
+                        <input type="text" name="department" id="{{ profile_form.department.id_for_label }}" 
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               value="{{ profile_form.department.value|default:'' }}">
+                        {% if profile_form.department.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ profile_form.department.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ profile_form.position.id_for_label }}" class="block text-gray-700 font-medium mb-2">职位</label>
+                        <input type="text" name="position" id="{{ profile_form.position.id_for_label }}" 
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               value="{{ profile_form.position.value|default:'' }}">
+                        {% if profile_form.position.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ profile_form.position.errors.0 }}</p>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+                
+                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    保存修改
+                </button>
+            </form>
         </div>
     </div>
     

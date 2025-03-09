@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    #header {
+        background: linear-gradient(90deg, #1a4789 0%, #2c5282 100%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    #branding h1 {
+        font-weight: 600;
+    }
+    
+    #branding h1 a {
+        display: flex;
+        align-items: center;
+    }
+    
+    #branding h1 a i {
+        margin-right: 10px;
+        font-size: 1.4rem;
+    }
+    
+    #user-tools {
+        font-size: 0.9rem;
+    }
+    
+    #user-tools a {
+        border-bottom: none;
+        text-decoration: none;
+        margin-left: 10px;
+    }
+    
+    #user-tools a:hover {
+        text-decoration: underline;
+    }
+    
+    div.breadcrumbs {
+        background: #2c7be5;
+    }
+    
+    /* 退出表单样式 */
+    .logout-form {
+        display: inline;
+    }
+    
+    .logout-form button {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .logout-form button:hover {
+        color: white;
+        text-decoration: underline;
+    }
+    
+    .logout-form button i {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <i class="fas fa-hospital"></i> 医院内部导航站管理系统
+    </a>
+</h1>
+{% endblock %}
+
+{% block welcome-msg %}
+    <strong>{{ user.username }}</strong> | 
+    {% if user.is_active and user.is_staff %}
+        <a href="{% url 'admin:password_change' %}"><i class="fas fa-key"></i> 修改密码</a> |
+    {% endif %}
+    <form class="logout-form" method="post" action="{% url 'admin:logout' %}">
+        {% csrf_token %}
+        <button type="submit"><i class="fas fa-sign-out-alt"></i> 退出</button>
+    </form>
+{% endblock %}
+
+{% block userlinks %}{% endblock %} 

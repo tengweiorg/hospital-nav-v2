@@ -1,149 +1,227 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>医院内部导航站</title>
     <!-- 引入TailwindCSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <!-- 引入FontAwesome图标 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
-        .search-results {
-            max-height: 400px;
-            overflow-y: auto;
-        }
+      .search-results {
+        max-height: 400px;
+        overflow-y: auto;
+        background-color: white !important;
+      }
+
+      /* 添加更强的搜索结果样式 */
+      .search-result-item {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px;
+      }
+
+      .search-result-item:hover {
+        background-color: #f3f4f6;
+      }
+
+      .search-result-title {
+        color: #1e3a8a;
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .search-result-description {
+        color: #4b5563;
+        font-size: 14px;
+      }
     </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center mb-4 md:mb-0">
-                <i class="fas fa-hospital text-2xl mr-2"></i>
-                <h1 class="text-2xl font-bold">医院内部导航站</h1>
-            </div>
-            
-            <div class="w-full md:w-1/3 relative">
-                <div class="relative">
-                    <input type="text" id="search-input" 
-                           class="w-full px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                           placeholder="搜索链接...">
-                    <button id="search-btn" class="absolute right-0 top-0 mt-2 mr-3 text-gray-600">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                <div id="search-results" class="absolute z-10 bg-white rounded-lg shadow-lg mt-1 w-full hidden search-results">
-                    <!-- 搜索结果将在这里动态显示 -->
-                </div>
-            </div>
-            
-            <nav class="flex items-center space-x-6 mt-4 md:mt-0">
-                <a href="{% url 'index' %}" class="hover:underline"><i class="fas fa-home mr-1"></i> 首页</a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'profile' %}" class="hover:underline"><i class="fas fa-user mr-1"></i> 个人资料</a>
-                    <form method="post" action="{% url 'logout' %}" class="inline">
-                        {% csrf_token %}
-                        <button type="submit" class="hover:underline bg-transparent border-0 p-0 text-white">
-                            <i class="fas fa-sign-out-alt mr-1"></i> 退出
-                        </button>
-                    </form>
-                    {% if user.is_staff %}
-                        <a href="{% url 'admin:index' %}" class="hover:underline"><i class="fas fa-cog mr-1"></i> 管理后台</a>
-                    {% endif %}
-                {% else %}
-                    <a href="{% url 'login' %}" class="hover:underline"><i class="fas fa-sign-in-alt mr-1"></i> 登录</a>
-                {% endif %}
-            </nav>
+      <div
+        class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center"
+      >
+        <div class="flex items-center mb-4 md:mb-0">
+          <i class="fas fa-hospital text-2xl mr-2"></i>
+          <h1 class="text-2xl font-bold">医院内部导航站</h1>
         </div>
+
+        <div class="w-full md:w-1/3 relative">
+          <div class="relative">
+            <input
+              type="text"
+              id="search-input"
+              class="w-full px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              placeholder="搜索链接..."
+            />
+            <button
+              id="search-btn"
+              class="absolute right-0 top-0 mt-2 mr-3 text-gray-600"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div
+            id="search-results"
+            class="absolute z-50 bg-white rounded-lg border border-gray-300 shadow-xl mt-1 w-full hidden search-results"
+          >
+            <!-- 搜索结果将在这里动态显示 -->
+          </div>
+        </div>
+
+        <nav class="flex items-center space-x-6 mt-4 md:mt-0">
+          <a href="{% url 'index' %}" class="hover:underline"
+            ><i class="fas fa-home mr-1"></i> 首页</a
+          >
+          {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="hover:underline"
+            ><i class="fas fa-user mr-1"></i> 个人资料</a
+          >
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="hover:underline bg-transparent border-0 p-0 text-white"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i> 退出
+            </button>
+          </form>
+          {% if user.is_staff %}
+          <a href="{% url 'admin:index' %}" class="hover:underline"
+            ><i class="fas fa-cog mr-1"></i> 管理后台</a
+          >
+          {% endif %} {% else %}
+          <a href="{% url 'login' %}" class="hover:underline"
+            ><i class="fas fa-sign-in-alt mr-1"></i> 登录</a
+          >
+          {% endif %}
+        </nav>
+      </div>
     </header>
-    
+
     <main class="container mx-auto px-4 py-8 flex-grow">
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </main>
-    
+
     <footer class="bg-gray-800 text-white py-6">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; {% now "Y" %} 医院内部导航站 | 技术支持: IT部门</p>
-        </div>
+      <div class="container mx-auto px-4 text-center">
+        <p>&copy; {% now "Y" %} 医院内部导航站 | 支持: 信息中心</p>
+      </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search-input');
-            const searchResults = document.getElementById('search-results');
-            const searchBtn = document.getElementById('search-btn');
-            
-            // 搜索功能
-            function performSearch() {
-                const query = searchInput.value.trim();
-                if (query.length < 1) {
-                    searchResults.classList.add('hidden');
-                    return;
-                }
-                
-                fetch(`/api/search?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            searchResults.innerHTML = `
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        const searchResults = document.getElementById("search-results");
+        const searchBtn = document.getElementById("search-btn");
+
+        // 搜索功能
+        function performSearch() {
+          const query = searchInput.value.trim();
+          if (query.length < 1) {
+            searchResults.classList.add("hidden");
+            return;
+          }
+
+          fetch(`/api/search?q=${encodeURIComponent(query)}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.length === 0) {
+                searchResults.innerHTML = `
                                 <div class="p-4 text-gray-500 text-center">
                                     未找到相关结果
                                 </div>
                             `;
-                        } else {
-                            searchResults.innerHTML = data.map(link => `
-                                <a href="${link.url}" target="_blank" class="block p-3 hover:bg-gray-100 border-b last:border-b-0">
+              } else {
+                searchResults.classList.remove("hidden");
+                searchResults.innerHTML = data
+                  .map(
+                    (link) => `
+                                <a href="${
+                                  link.url
+                                }" target="_blank" class="block search-result-item">
                                     <div class="flex items-start">
-                                        <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center text-blue-500 mr-3 flex-shrink-0">
-                                            ${link.icon_class ? `<i class="${link.icon_class}"></i>` : `<i class="fas fa-link"></i>`}
+                                        <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0">
+                                            ${
+                                              link.icon_class
+                                                ? `<i class="${link.icon_class}"></i>`
+                                                : `<i class="fas fa-link"></i>`
+                                            }
                                         </div>
                                         <div>
-                                            <div class="font-medium">${link.title}</div>
-                                            ${link.description ? `<p class="text-sm text-gray-600">${link.description}</p>` : ''}
+                                            <div class="search-result-title">${
+                                              link.title
+                                            }</div>
+                                            ${
+                                              link.description
+                                                ? `<p class="search-result-description">${link.description}</p>`
+                                                : ""
+                                            }
                                         </div>
                                     </div>
                                 </a>
-                            `).join('');
-                        }
-                        searchResults.classList.remove('hidden');
-                    })
-                    .catch(error => {
-                        console.error('搜索出错:', error);
-                        searchResults.innerHTML = `
+                            `
+                  )
+                  .join("");
+              }
+              if (!searchResults.classList.contains("hidden")) {
+                // 确保搜索结果可见并滚动到视图
+                searchResults.style.maxHeight = "400px";
+                searchResults.style.overflowY = "auto";
+                searchResults.scrollIntoView({
+                  behavior: "smooth",
+                  block: "nearest",
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("搜索出错:", error);
+              searchResults.innerHTML = `
                             <div class="p-4 text-red-500 text-center">
                                 搜索时出现错误，请重试
                             </div>
                         `;
-                        searchResults.classList.remove('hidden');
-                    });
-            }
-            
-            // 输入时执行搜索
-            let searchTimeout;
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(performSearch, 300);
+              searchResults.classList.remove("hidden");
             });
-            
-            // 点击搜索按钮
-            searchBtn.addEventListener('click', performSearch);
-            
-            // 按下Enter键也触发搜索
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-            
-            // 点击外部时隐藏搜索结果
-            document.addEventListener('click', function(event) {
-                if (!searchInput.contains(event.target) && !searchResults.contains(event.target) && !searchBtn.contains(event.target)) {
-                    searchResults.classList.add('hidden');
-                }
-            });
+        }
+
+        // 输入时执行搜索
+        let searchTimeout;
+        searchInput.addEventListener("input", function () {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(performSearch, 300);
         });
+
+        // 点击搜索按钮
+        searchBtn.addEventListener("click", performSearch);
+
+        // 按下Enter键也触发搜索
+        searchInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            performSearch();
+          }
+        });
+
+        // 点击外部时隐藏搜索结果
+        document.addEventListener("click", function (event) {
+          if (
+            !searchInput.contains(event.target) &&
+            !searchResults.contains(event.target) &&
+            !searchBtn.contains(event.target)
+          ) {
+            searchResults.classList.add("hidden");
+          }
+        });
+      });
     </script>
-    
+
     {% block extra_js %}{% endblock %}
-</body>
-</html> 
+  </body>
+</html>

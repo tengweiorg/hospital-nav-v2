@@ -1,0 +1,321 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body {
+        background-color: #f3f4f6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    #content {
+        padding: 20px;
+    }
+    
+    /* 布局优化 */
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* 头部区域 */
+    .dashboard-header {
+        background: linear-gradient(90deg, #1a4789 0%, #2c5282 100%);
+        border-radius: 8px;
+        padding: 20px;
+        color: white;
+    }
+    
+    .dashboard-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .dashboard-header h2 i {
+        margin-right: 10px;
+    }
+    
+    .dashboard-header p {
+        margin: 10px 0 0;
+        opacity: 0.9;
+    }
+    
+    /* 主内容区域 */
+    .main-content-wrapper {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    /* 应用列表区域 - 占据主要空间 */
+    .app-content {
+        flex: 1;
+        min-width: 0; /* 防止flex子项溢出 */
+        min-width: 65%;
+    }
+    
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+    
+    .app-item {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .app-item h2 {
+        margin: 0;
+        padding: 15px;
+        background: #1a4789;
+        color: white;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .app-item h2 i {
+        margin-right: 10px;
+    }
+    
+    .app-item table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .app-item table td, .app-item table th {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .app-item table tr:last-child td,
+    .app-item table tr:last-child th {
+        border-bottom: none;
+    }
+    
+    .app-item table th {
+        text-align: left;
+        width: 60%;
+    }
+    
+    .app-item table td {
+        text-align: right;
+    }
+    
+    .app-item table td a {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #f3f4f6;
+        border-radius: 4px;
+        color: #1a4789;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    
+    .app-item table td a:hover {
+        background: #e5e7eb;
+    }
+    
+    /* 最近动作区域 - 固定宽度 */
+    .recent-actions-wrapper {
+        width: 300px;
+        flex-shrink: 0;
+    }
+    
+    .recent-actions {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .recent-actions h2 {
+        margin: 0;
+        padding: 15px;
+        background: #1a4789;
+        color: white;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .recent-actions h2 i {
+        margin-right: 10px;
+    }
+    
+    .recent-actions .module {
+        margin: 0;
+    }
+    
+    .recent-actions .module h3 {
+        display: none;
+    }
+    
+    .recent-actions .module ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    
+    .recent-actions .module ul li {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .recent-actions .module ul li:last-child {
+        border-bottom: none;
+    }
+    
+    .recent-actions .module ul li i {
+        margin-right: 8px;
+    }
+    
+    .recent-actions .module ul li .mini {
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+    }
+    
+    /* 底部区域 */
+    .dashboard-footer {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 响应式布局调整 */
+    @media (max-width: 1024px) {
+        .main-content-wrapper {
+            flex-direction: column;
+        }
+        
+        .recent-actions-wrapper {
+            width: 100%;
+        }
+        
+        .recent-actions {
+            position: static;
+        }
+        
+        .app-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-hospital"></i> 欢迎使用医院内部导航站管理系统</h2>
+        <p>今天是 {% now "Y年m月d日" %}，您可以在这里管理所有导航内容。</p>
+    </div>
+    
+    <div class="main-content-wrapper">
+        <div class="app-content">
+            <div class="app-grid">
+                {% for app in app_list %}
+                    <div class="app-item">
+                        <h2>
+                            {% if app.app_label == 'navigator' %}
+                                <i class="fas fa-compass"></i>
+                            {% elif app.app_label == 'accounts' %}
+                                <i class="fas fa-users"></i>
+                            {% elif app.app_label == 'auth' %}
+                                <i class="fas fa-shield-alt"></i>
+                            {% else %}
+                                <i class="fas fa-cog"></i>
+                            {% endif %}
+                            {{ app.name }}
+                        </h2>
+                        <table>
+                        {% for model in app.models %}
+                            <tr>
+                                <th scope="row">{{ model.name }}</th>
+                                <td>
+                                    {% if model.add_url %}<a href="{{ model.add_url }}"><i class="fas fa-plus"></i> 添加</a>{% endif %}
+                                </td>
+                                <td>
+                                    {% if model.admin_url %}<a href="{{ model.admin_url }}"><i class="fas fa-list"></i> 查看</a>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="recent-actions-wrapper">
+            <div class="recent-actions">
+                <h2><i class="fas fa-history"></i> 最近动作</h2>
+                {% get_admin_log 10 as admin_log %}
+                {% if not admin_log %}
+                    <div style="padding: 15px; text-align: center; color: #6b7280;">
+                        <p>没有可用的动作记录</p>
+                    </div>
+                {% else %}
+                    <div class="module" id="recent-actions-module">
+                        <h3>{% translate 'Recent actions' %}</h3>
+                        <ul class="actionlist">
+                            {% for entry in admin_log %}
+                            <li>
+                                {% if entry.is_addition %}
+                                    <i class="fas fa-plus" style="color: #10b981;"></i>
+                                {% elif entry.is_change %}
+                                    <i class="fas fa-edit" style="color: #3b82f6;"></i>
+                                {% elif entry.is_deletion %}
+                                    <i class="fas fa-trash" style="color: #ef4444;"></i>
+                                {% endif %}
+                                
+                                {% if entry.content_type %}
+                                    <span class="mini">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                                {% else %}
+                                    <span class="mini">{% translate 'Unknown content' %}</span>
+                                {% endif %}
+                                
+                                {% if entry.is_addition or entry.is_change %}
+                                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                {% else %}
+                                    {{ entry.object_repr }}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-footer">
+        <p><i class="fas fa-info-circle"></i> 如需帮助，请联系信息中心</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %} 

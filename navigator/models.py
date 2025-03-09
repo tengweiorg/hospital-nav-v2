@@ -40,6 +40,7 @@ class Link(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
     pinyin = models.CharField(max_length=500, blank=True, verbose_name="拼音", help_text="自动生成，用于搜索")
+    click_count = models.IntegerField(default=0)
     
     class Meta:
         ordering = ['category', 'order', 'title']

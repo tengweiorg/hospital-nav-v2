@@ -1,8 +1,9 @@
 from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from navigator.models import Category, Link
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 api = NinjaAPI(title="医院导航API", version="1.0.0")
 
@@ -69,31 +70,35 @@ def list_categories(request):
     
     return result
 
-@api.get("/search", response=List[LinkSchema])
-def search_links(request, q: str):
-    """搜索链接"""
-    query = q.strip().lower()
+@api.get("/search")
+def search_links(request, q: str = ""):
+    """搜索链接的API端点"""
+    if not q or len(q) < 1:
+        return []
     
-    # 构建查询条件：标题、描述或拼音包含搜索词
-    filter_condition = Q(title__icontains=query) | Q(description__icontains=query) | Q(pinyin__icontains=query)
+    # 搜索标题、描述和拼音
+    links = Link.objects.filter(
+        Q(title__icontains=q) | 
+        Q(description__icontains=q) |
+        Q(pinyin__icontains=q)
+    )
     
-    # 根据用户登录状态过滤可见性
+    # 检查可见性
     if not request.user.is_authenticated:
-        filter_condition &= Q(visibility='public')
+        links = links.filter(visibility='public')
     
-    links = Link.objects.filter(filter_condition)
-    
-    return [
-        {
+    results = []
+    for link in links[:10]:  # 限制返回10个结果
+        results.append({
             "id": link.id,
             "title": link.title,
             "url": link.url,
             "description": link.description,
             "icon_class": link.icon_class,
-            "visibility": link.visibility
-        }
-        for link in links
-    ]
+            "category_name": link.category.name
+        })
+    
+    return results
 
 @api.get("/user", response=UserSchema, auth=django_auth)
 def get_user_info(request):

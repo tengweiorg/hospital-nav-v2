@@ -15,19 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import api
-from navigator.views import index, profile
+from navigator.views import profile, custom_login
 from django.contrib.auth import views as auth_views
+
+# 自定义Admin站点标题和头部
+admin.site.site_header = '医院内部导航站管理系统'  # 登录页和管理页面顶部标题
+admin.site.site_title = '医院导航管理'  # 浏览器标签标题
+admin.site.index_title = '管理中心'  # 管理页面的主标题
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api.urls),
-    path('', index, name='index'),
+    path('', include('navigator.urls')),
     path('profile/', profile, name='profile'),
-    path('login/', auth_views.LoginView.as_view(template_name='navigator/login.html'), name='login'),
+    path('login/', custom_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/', http_method_names=['get', 'post']), name='logout'),
 ]
 

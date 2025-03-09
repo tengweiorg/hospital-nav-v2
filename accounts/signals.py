@@ -5,9 +5,10 @@ from .models import UserProfile
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    """当用户创建时，自动创建对应的用户资料"""
+    """当用户创建时，自动创建对应的用户资料（如果不存在）"""
     if created:
-        UserProfile.objects.create(user=instance)
+        # 使用get_or_create而不是直接create，避免重复创建
+        UserProfile.objects.get_or_create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

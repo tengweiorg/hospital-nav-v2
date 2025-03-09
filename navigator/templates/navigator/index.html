@@ -1,108 +1,242 @@
-{% extends 'navigator/base.html' %}
-
-{% block content %}
-<div class="mb-6">
-    <!-- <h2 class="text-2xl font-bold mb-2">欢迎使用医院内部导航站</h2> -->
-    
+{% extends 'navigator/base.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/navigator.css' %}" />
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-6">
+  <div class="mb-6">
     {% if user.is_authenticated %}
-        <p class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-            您的IP是 <strong>{{ client_ip }}</strong>, 当前时间 <strong>{{ current_time }}</strong>
-            <!-- {% if user.profile.department %}
-                <span class="ml-2">部门: {{ user.profile.department }}</span>
-            {% endif %} -->
-        </p>
-    {% else %}
-        <p class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-6">
-            您的IP是 <strong>{{ client_ip }}</strong>, 当前时间 <strong>{{ current_time }}</strong><br>
-            <!-- 您尚未登录，部分资源可能不可见。<a href="{% url 'login' %}" class="underline font-semibold">点击此处登录</a> -->
-        </p>
-    {% endif %}
-</div>
+    <div
+      class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-sm p-4 mb-6"
+    >
+      <div class="flex flex-wrap md:flex-nowrap items-center justify-between">
+        <div class="flex items-center space-x-3 mb-3 md:mb-0">
+          <div
+            class="bg-gradient-to-r from-green-400 to-blue-500 text-white p-2 rounded-lg"
+          >
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 font-medium">访客信息</div>
+            <div class="text-lg font-bold text-gray-800">
+              您的IP: {{ client_ip }}
+            </div>
+          </div>
+        </div>
 
-<div id="categories-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div class="col-span-full text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-        <p class="mt-2 text-gray-600">正在加载导航内容...</p>
+        <div class="flex items-center space-x-3">
+          <div
+            class="bg-gradient-to-r from-cyan-400 to-blue-500 text-white p-2 rounded-lg"
+          >
+            <i class="fas fa-clock"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 font-medium">当前时间</div>
+            <div
+              class="text-base font-medium text-gray-800"
+              id="current-time-display"
+            >
+              {{ current_time }}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    {% else %}
+    <div
+      class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm p-4 mb-6"
+    >
+      <div class="flex flex-wrap md:flex-nowrap items-center justify-between">
+        <div class="flex items-center space-x-3 mb-3 md:mb-0">
+          <div
+            class="bg-gradient-to-r from-blue-400 to-indigo-500 text-white p-2 rounded-lg"
+          >
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 font-medium">访客信息</div>
+            <div class="text-lg font-bold text-gray-800">
+              您的IP: {{ client_ip }}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div
+            class="bg-gradient-to-r from-indigo-400 to-purple-500 text-white p-2 rounded-lg"
+          >
+            <i class="fas fa-clock"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500 font-medium">当前时间</div>
+            <div
+              class="text-base font-medium text-gray-800"
+              id="current-time-display"
+            >
+              {{ current_time }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div
+    id="categories-container"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  >
+    <div class="col-span-full text-center py-8">
+      <div class="inline-block">
+        <div
+          class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"
+        ></div>
+      </div>
+      <p class="mt-2 text-gray-600">加载中...</p>
+    </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
+{% endblock %} {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetchCategories();
-    });
+  // 更新时间函数
+  function updateTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
 
-    function fetchCategories() {
-        fetch('/api/categories')
-            .then(response => response.json())
-            .then(data => {
-                renderCategories(data);
-            })
-            .catch(error => {
-                console.error('Error fetching categories:', error);
-                document.getElementById('categories-container').innerHTML = `
-                    <div class="col-span-full text-center py-8">
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                            <p>加载导航内容失败，请刷新页面重试</p>
-                        </div>
-                    </div>
-                `;
-            });
+    if (document.getElementById("current-time-display")) {
+      document.getElementById("current-time-display").textContent =
+        hours + ":" + minutes + ":" + seconds;
     }
+  }
 
-    function renderCategories(categories) {
-        const container = document.getElementById('categories-container');
-        
-        if (categories.length === 0) {
-            container.innerHTML = `
-                <div class="col-span-full text-center py-8">
-                    <p class="text-gray-500">暂无导航内容</p>
-                </div>
-            `;
-            return;
+  // 初始化时间更新
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // 记录链接点击
+  function recordLinkClick(linkId, element, event) {
+    event.preventDefault();
+    const url = element.getAttribute("href");
+    const clickCountElement = element.querySelector(".click-count-value");
+
+    fetch(`/api/link/${linkId}/click/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (clickCountElement) {
+          clickCountElement.textContent = data.click_count;
+          clickCountElement.parentNode.classList.add("pulse-animation");
+
+          setTimeout(() => {
+            clickCountElement.parentNode.classList.remove("pulse-animation");
+          }, 300);
         }
-        
-        let html = '';
-        
-        categories.forEach(category => {
-            html += `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                    <div class="bg-blue-500 text-white px-4 py-3">
-                        <h3 class="text-lg font-semibold flex items-center">
-                            ${category.icon ? `<i class="${category.icon} mr-2"></i>` : ''}
-                            ${category.name}
-                        </h3>
-                    </div>
-                    <div class="p-4">
-                        <ul class="space-y-3">
-            `;
-            
-            category.links.forEach(link => {
-                html += `
-                    <li>
-                        <a href="${link.url}" target="_blank" class="flex items-start p-2 hover:bg-gray-50 rounded transition-colors group">
-                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 mr-3">
-                                ${link.icon_class ? `<i class="${link.icon_class}"></i>` : '<i class="fas fa-link"></i>'}
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-800 group-hover:text-blue-600">${link.title}</div>
-                                ${link.description ? `<p class="text-sm text-gray-500">${link.description}</p>` : ''}
-                                ${link.visibility === 'authenticated' ? '<span class="inline-block text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded mt-1">仅登录可见</span>' : ''}
-                            </div>
-                        </a>
-                    </li>
-                `;
-            });
-            
-            html += `
-                        </ul>
-                    </div>
+
+        window.open(url, "_blank");
+      })
+      .catch((error) => {
+        console.error("记录点击出错:", error);
+        window.open(url, "_blank");
+      });
+  }
+
+  // 获取分类数据
+  function fetchCategories() {
+    fetch("/api/categories")
+      .then((response) => response.json())
+      .then((data) => {
+        const container = document.getElementById("categories-container");
+        let html = "";
+
+        data.forEach((category) => {
+          const linkCount = category.links ? category.links.length : 0;
+
+          html += `
+            <div class="category-card">
+              <div class="category-header">
+                <div class="category-title">
+                  <i class="${category.icon_class || "fas fa-folder"}"></i>
+                  ${category.name}
                 </div>
+                <span class="category-count">${linkCount} 个链接</span>
+              </div>
+              <div class="links-container">
+          `;
+
+          if (category.links && category.links.length > 0) {
+            category.links.forEach((link) => {
+              const isHot = link.click_count > 100;
+
+              html += `
+                <div class="link-card ${isHot ? "hot-link" : ""}">
+                  ${isHot ? '<span class="hot-badge">热门</span>' : ""}
+                  <a href="${
+                    link.url
+                  }" class="link-content" onclick="recordLinkClick(${
+                link.id
+              }, this, event)">
+                    <div class="link-icon">
+                      <i class="${link.icon_class || "fas fa-link"}"></i>
+                    </div>
+                    <div class="link-text">
+                      <div class="link-title">${link.title}</div>
+                      ${
+                        link.description
+                          ? `<div class="link-description">${link.description}</div>`
+                          : ""
+                      }
+                      <div class="click-count">
+                        <i class="fas fa-eye"></i>
+                        <span class="click-count-value">${
+                          link.click_count || 0
+                        }</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              `;
+            });
+          } else {
+            html += `
+              <div class="empty-state">
+                <i class="fas fa-info-circle"></i>
+                <p>该分类下暂无链接</p>
+              </div>
             `;
+          }
+
+          html += `
+              </div>
+            </div>
+          `;
         });
-        
+
         container.innerHTML = html;
-    }
+      })
+      .catch((error) => {
+        console.error("获取分类数据出错:", error);
+
+        document.getElementById("categories-container").innerHTML = `
+          <div class="col-span-full text-center py-8">
+            <div class="text-red-500">
+              <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+              <p>加载分类数据时出错</p>
+              <p class="text-sm mt-2">错误详情: ${error.message}</p>
+              <button onclick="fetchCategories()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <i class="fas fa-sync-alt mr-1"></i> 重试
+              </button>
+            </div>
+          </div>
+        `;
+      });
+  }
+
+  // 页面加载完成后获取分类数据
+  document.addEventListener("DOMContentLoaded", fetchCategories);
 </script>
-{% endblock %} 
+{% endblock %}
