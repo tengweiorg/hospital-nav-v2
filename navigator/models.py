@@ -6,7 +6,7 @@ from pypinyin import lazy_pinyin
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="分类名称")
-    icon = models.CharField(max_length=50, blank=True, help_text="FontAwesome图标类名", verbose_name="图标类名")
+    icon_class = models.CharField(max_length=50, blank=True, help_text="FontAwesome图标类名", verbose_name="图标类名")
     order = models.PositiveIntegerField(default=0, verbose_name="排序")
     pinyin = models.CharField(max_length=200, blank=True, verbose_name="拼音", help_text="自动生成，用于搜索")
     
@@ -41,9 +41,10 @@ class Link(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
     pinyin = models.CharField(max_length=500, blank=True, verbose_name="拼音", help_text="自动生成，用于搜索")
     click_count = models.IntegerField(default=0)
+    is_pinned = models.BooleanField(default=False, verbose_name="置顶显示", help_text="置顶的链接将优先显示在热门链接区域")
     
     class Meta:
-        ordering = ['category', 'order', 'title']
+        ordering = ['-is_pinned', '-click_count', 'order', 'title']
         verbose_name = "链接"
         verbose_name_plural = "链接"
     

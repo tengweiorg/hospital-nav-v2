@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hospital_navigator.middleware.NoCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'hospital_navigator.urls'

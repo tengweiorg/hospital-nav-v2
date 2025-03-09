@@ -4,10 +4,12 @@ from django.contrib.auth import authenticate, login
 from datetime import datetime
 from accounts.forms import UserForm, ProfileForm
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Link, Category
+from django.db.models import Q, F
+import locale
 
 # Create your views here.
 
@@ -21,11 +23,31 @@ def index(request):
         ip = request.META.get('REMOTE_ADDR')
     
     # 获取当前时间
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        locale.setlocale(locale.LC_TIME, 'zh_CN.UTF-8')  # 设置中文环境
+    except:
+        pass  # 如果失败，保持默认环境
+        
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    
+    # 自定义星期几
+    weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+    weekday = weekdays[now.weekday()]
+    
+    current_date = f"{now.year}年{now.month}月{now.day}日 {weekday}"
+    
+    # 获取热门链接
+    if request.user.is_authenticated:
+        popular_links = Link.objects.all().order_by('-click_count')[:9]
+    else:
+        popular_links = Link.objects.filter(visibility='public').order_by('-click_count')[:9]
     
     context = {
         'client_ip': ip,
-        'current_time': current_time
+        'current_time': current_time,
+        'current_date': current_date,
+        'popular_links': popular_links  # 添加热门链接到上下文
     }
     
     return render(request, 'navigator/index.html', context)
@@ -86,22 +108,26 @@ def custom_login(request):
         'next': request.GET.get('next', '/')
     })
 
-@csrf_exempt
 @require_POST
 def increment_click_count(request, link_id):
+    """增加链接点击次数并返回最新计数值"""
     try:
+        # 使用 F() 表达式原子性增加点击量
+        Link.objects.filter(id=link_id).update(click_count=F('click_count') + 1)
+        
+        # 重新获取最新的链接对象
         link = Link.objects.get(id=link_id)
-        link.click_count += 1
-        link.save(update_fields=['click_count'])  # 只更新点击次数字段
+        
+        # 返回标准JSON响应，包含ID和点击计数
         return JsonResponse({
-            'success': True, 
+            'id': link_id,
             'click_count': link.click_count,
-            'is_hot': link.click_count > 100
+            'status': 'success'
         })
     except Link.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Link not found'}, status=404)
+        return JsonResponse({'status': 'error', 'message': '链接不存在'}, status=404)
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 def get_categories(request):
     categories = Category.objects.all().order_by('order', 'name')
@@ -129,3 +155,110 @@ def get_categories(request):
         })
     
     return JsonResponse(data, safe=False)
+
+# 添加HTMX视图函数
+def htmx_categories(request):
+    """HTMX分类视图，返回HTML片段"""
+    categories = Category.objects.all().order_by('order', 'name')
+    result = []
+    
+    for category in categories:
+        # 根据用户登录状态过滤链接
+        if request.user.is_authenticated:
+            links = category.links.all()
+        else:
+            links = category.links.filter(visibility='public')
+        
+        if not links.exists():
+            continue  # 跳过没有链接的分类
+            
+        # 转换查询集为列表以便在模板中使用
+        links_list = [{
+            'id': link.id,
+            'title': link.title,
+            'url': link.url,
+            'description': link.description,
+            'icon_class': link.icon_class,
+            'click_count': link.click_count
+        } for link in links.order_by('-click_count', 'title')]
+        
+        result.append({
+            "id": category.id,
+            "name": category.name,
+            "icon_class": category.icon_class,
+            "links": links_list
+        })
+    
+    return render(request, 'navigator/partials/categories.html', {
+        'categories': result
+    })
+
+def htmx_search(request):
+    """HTMX搜索视图，返回HTML片段"""
+    query = request.GET.get('q', '')
+    if not query or len(query) < 1:
+        return HttpResponse('')
+    
+    # 搜索标题、描述和拼音
+    links = Link.objects.filter(
+        Q(title__icontains=query) | 
+        Q(description__icontains=query) |
+        Q(pinyin__icontains=query)
+    ).select_related('category')
+    
+    # 检查可见性
+    if not request.user.is_authenticated:
+        links = links.filter(visibility='public')
+    
+    return render(request, 'navigator/partials/search_results.html', {
+        'links': links[:15]
+    })
+
+def htmx_popular(request):
+    """HTMX热门链接视图，返回HTML片段"""
+    # 先获取置顶链接
+    if request.user.is_authenticated:
+        pinned_links = Link.objects.filter(is_pinned=True).order_by('-click_count')
+    else:
+        pinned_links = Link.objects.filter(is_pinned=True, visibility='public').order_by('-click_count')
+    
+    # 获取非置顶但热门的链接
+    remaining_count = max(0, 10 - pinned_links.count())
+    if remaining_count > 0:
+        if request.user.is_authenticated:
+            hot_links = Link.objects.filter(is_pinned=False).order_by('-click_count')[:remaining_count]
+        else:
+            hot_links = Link.objects.filter(is_pinned=False, visibility='public').order_by('-click_count')[:remaining_count]
+    else:
+        hot_links = Link.objects.none()
+    
+    # 合并置顶和热门链接数据
+    links_list = []
+    
+    # 添加置顶链接
+    for link in pinned_links:
+        links_list.append({
+            'id': link.id,
+            'title': link.title,
+            'url': link.url,
+            'description': link.description,
+            'icon_class': link.icon_class,
+            'click_count': link.click_count,
+            'is_pinned': True  # 明确标记为置顶
+        })
+    
+    # 添加非置顶热门链接
+    for link in hot_links:
+        links_list.append({
+            'id': link.id,
+            'title': link.title,
+            'url': link.url,
+            'description': link.description,
+            'icon_class': link.icon_class,
+            'click_count': link.click_count,
+            'is_pinned': False
+        })
+    
+    return render(request, 'navigator/partials/popular_links.html', {
+        'links': links_list
+    })

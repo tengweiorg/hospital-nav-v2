@@ -10,4 +10,9 @@ urlpatterns = [
     
     # API 端点用于获取分类数据
     path('api/categories', views.get_categories, name='get_categories'),
+    
+    # 添加HTMX端点
+    path('api/htmx/categories', views.htmx_categories, name='htmx_categories'),
+    path('api/htmx/search', views.htmx_search, name='htmx_search'),
+    path('api/htmx/popular', views.htmx_popular, name='htmx_popular'),
 ] 

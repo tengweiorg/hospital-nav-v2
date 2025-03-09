@@ -1,0 +1,47 @@
+<div
+  class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
+>
+  {% if links %} {% for link in links %}
+  <div class="link-card {% if link.is_pinned %}pinned-link{% endif %}">
+    {% if link.is_pinned %}
+    <div class="pin-badge" title="置顶链接">
+      <i class="fas fa-thumbtack"></i>
+    </div>
+    {% endif %}
+    <a
+      href="{{ link.url }}"
+      class="link-content"
+      hx-post="/api/link/{{ link.id }}/click/"
+      hx-trigger="mousedown"
+      hx-swap="innerHTML"
+      hx-target="#popular-count-{{ link.id }}"
+      target="_blank"
+    >
+      <div class="link-icon">
+        <i class="{{ link.icon_class|default:'fas fa-link' }}"></i>
+      </div>
+      <div class="link-text">
+        <div class="link-title">
+          {{ link.title }} {% if link.is_pinned %}
+          <i
+            class="fas fa-thumbtack text-blue-500 text-xs ml-1 inline-icon"
+            title="置顶"
+          ></i>
+          {% endif %}
+        </div>
+        {% if link.description %}
+        <div class="link-description truncate">{{ link.description }}</div>
+        {% endif %}
+        <div class="click-count">
+          <i class="fas fa-eye"></i>
+          <span class="click-count-value" id="popular-count-{{ link.id }}"
+            >{{ link.click_count }}</span
+          >
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %} {% else %}
+  <div class="col-span-full text-center py-6 text-gray-500">暂无热门链接</div>
+  {% endif %}
+</div>

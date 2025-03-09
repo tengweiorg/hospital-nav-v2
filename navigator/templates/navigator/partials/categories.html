@@ -1,0 +1,47 @@
+{% for category in categories %}
+<div class="category-card">
+  <div class="category-header">
+    <div class="category-title">
+      <i class="{{ category.icon_class|default:'fas fa-folder' }}"></i>
+      {{ category.name }}
+    </div>
+    <span class="category-count">{{ category.links|length }} 个链接</span>
+  </div>
+  <div class="links-container">
+    {% if category.links %} {% for link in category.links %}
+    <div class="link-card">
+      <a
+        href="{{ link.url }}"
+        class="link-content"
+        hx-post="/api/link/{{ link.id }}/click/"
+        hx-trigger="mousedown"
+        hx-swap="innerHTML"
+        hx-target="#click-count-{{ link.id }}"
+        target="_blank"
+      >
+        <div class="link-icon">
+          <i class="{{ link.icon_class|default:'fas fa-link' }}"></i>
+        </div>
+        <div class="link-text">
+          <div class="link-title">{{ link.title }}</div>
+          {% if link.description %}
+          <div class="link-description">{{ link.description }}</div>
+          {% endif %}
+          <div class="click-count">
+            <i class="fas fa-eye"></i>
+            <span class="click-count-value" id="click-count-{{ link.id }}"
+              >{{ link.click_count|default:0 }}</span
+            >
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %} {% else %}
+    <div class="empty-state">
+      <i class="fas fa-info-circle"></i>
+      <p>该分类下暂无链接</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
